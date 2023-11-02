@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "blue.nightmarish.despawned.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8.0",
+  "mixins": [
+    "entity.DespawnAnimalWhenFar",
+    "entity.MobCheckDespawn"
+  ]
+}
