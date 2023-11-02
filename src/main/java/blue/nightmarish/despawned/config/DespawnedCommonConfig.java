@@ -14,10 +14,10 @@ public class DespawnedCommonConfig {
         int vanillaDespawnDistance = MobCategory.CREATURE.getDespawnDistance();
         int vanillaNoDespawnDistance = MobCategory.CREATURE.getNoDespawnDistance();
         BUILDER.push("global configuration for despawned");
-        BUILDER.push("these values will be used for all worlds that haven't had a cap configured on them");
+        BUILDER.comment("these values will be used for all worlds that haven't had a cap configured on them\n");
         DEFAULT_DESPAWN_DISTANCE = BUILDER
             .comment("the default despawn distance for creatures")
-            .comment("mobs further than this distance can despawn")
+            .comment("mobs further than this distance from the player can despawn")
             .defineInRange("Default Creature Despawn Distance", vanillaDespawnDistance, 0, 1000); // dunno how to make it greater than 0 without a max.
         DEFAULT_NO_DESPAWN_DISTANCE = BUILDER
             .comment("the default 'no despawn' distance for creatures")

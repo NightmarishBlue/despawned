@@ -24,6 +24,7 @@ public class Despawned
     public static final String MOD_ID = "despawned";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     // Create a Deferred Register to hold Blocks which will all be registered under the "despawned" namespace
 //    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
 //    // Create a Deferred Register to hold Items which will all be registered under the "despawned" namespace

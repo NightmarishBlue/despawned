@@ -3,6 +3,8 @@ package blue.nightmarish.despawned.config;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
+import static blue.nightmarish.despawned.Despawned.LOGGER;
+
 public class ServerStartConfig {
     public static void applyConfig() throws IllegalAccessException {
         int globalDespawnDistance = DespawnedCommonConfig.DEFAULT_DESPAWN_DISTANCE.get();
@@ -13,5 +15,6 @@ public class ServerStartConfig {
         if (worldNoDespawnDistance == 0) worldNoDespawnDistance = globalNoDespawnDistance;
         ObfuscationReflectionHelper.findField(MobCategory.class, "despawnDistance").set(MobCategory.CREATURE, worldDespawnDistance);
         ObfuscationReflectionHelper.findField(MobCategory.class, "noDespawnDistance").set(MobCategory.CREATURE, worldNoDespawnDistance);
+        LOGGER.info("despawn distance is " + worldDespawnDistance + "; no despawn distance is " + worldNoDespawnDistance);
     }
 }
