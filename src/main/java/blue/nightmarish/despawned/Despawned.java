@@ -2,6 +2,7 @@ package blue.nightmarish.despawned;
 
 import blue.nightmarish.despawned.config.DespawnedCommonConfig;
 import blue.nightmarish.despawned.config.DespawnedWorldConfig;
+import blue.nightmarish.despawned.config.ServerStartConfig;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,8 +47,6 @@ public class Despawned
 //        ITEMS.register(modEventBus);
 
         // Register the mod config
-//        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DespawnedCommonConfig.SPEC, MOD_ID + "-common.toml");
-//        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, DespawnedWorldConfig.SPEC, MOD_ID + "-world.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DespawnedCommonConfig.SPEC, MOD_ID + "-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, DespawnedWorldConfig.SPEC, MOD_ID + "-world.toml");
 
@@ -55,8 +54,7 @@ public class Despawned
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
 //        LOGGER.info("HELLO FROM COMMON SETUP");
 //        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
@@ -66,6 +64,8 @@ public class Despawned
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
 
+    public void onServerStarting(ServerStartingEvent event) throws IllegalAccessException {
+        ServerStartConfig.applyConfig();
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
