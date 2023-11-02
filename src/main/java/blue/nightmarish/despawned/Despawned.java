@@ -1,12 +1,16 @@
 package blue.nightmarish.despawned;
 
+import blue.nightmarish.despawned.config.DespawnedCommonConfig;
+import blue.nightmarish.despawned.config.DespawnedWorldConfig;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -44,6 +48,8 @@ public class Despawned
         // Register the mod config
 //        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DespawnedCommonConfig.SPEC, MOD_ID + "-common.toml");
 //        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, DespawnedWorldConfig.SPEC, MOD_ID + "-world.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DespawnedCommonConfig.SPEC, MOD_ID + "-common.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, DespawnedWorldConfig.SPEC, MOD_ID + "-world.toml");
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
