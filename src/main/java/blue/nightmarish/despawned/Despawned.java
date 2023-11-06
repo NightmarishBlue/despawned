@@ -4,6 +4,7 @@ import blue.nightmarish.despawned.config.DespawnedCommonConfig;
 import blue.nightmarish.despawned.config.DespawnedWorldConfig;
 import blue.nightmarish.despawned.config.ServerStartConfig;
 import com.mojang.logging.LogUtils;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -17,14 +18,19 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.util.Set;
+
 @Mod(Despawned.MOD_ID)
 public class Despawned
 {
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "despawned";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    // const values
+    public static final Set<MobSpawnType> VOLATILE_SPAWN_TYPES = Set.of(MobSpawnType.NATURAL, MobSpawnType.CHUNK_GENERATION, MobSpawnType.SPAWN_EGG);
+
     // Create a Deferred Register to hold Blocks which will all be registered under the "despawned" namespace
 //    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
 //    // Create a Deferred Register to hold Items which will all be registered under the "despawned" namespace
@@ -63,8 +69,6 @@ public class Despawned
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-
     public void onServerStarting(ServerStartingEvent event) throws IllegalAccessException {
         ServerStartConfig.applyConfig();
     }
