@@ -20,14 +20,14 @@ import static blue.nightmarish.despawned.Despawned.LOGGER;
 import static blue.nightmarish.despawned.Despawned.VOLATILE_SPAWN_TYPES;
 
 @Mixin(Mob.class)
-public abstract class MobCheckDespawn extends LivingEntity {
+public abstract class MobDespawnRules extends LivingEntity {
     //@Shadow public abstract boolean isPersistenceRequired();
     @Nullable @Shadow
     private MobSpawnType spawnType;
 
     @Shadow private boolean persistenceRequired;
 
-    protected MobCheckDespawn(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
+    protected MobDespawnRules(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
