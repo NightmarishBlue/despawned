@@ -30,6 +30,9 @@ public class Despawned
 
     // const values
     public static final Set<MobSpawnType> VOLATILE_SPAWN_TYPES = Set.of(MobSpawnType.NATURAL, MobSpawnType.CHUNK_GENERATION, MobSpawnType.SPAWN_EGG);
+    public static final int DEFAULT_MINIMUM_AGE = 6000;
+
+    public static int MINIMUM_AGE;
 
     // Create a Deferred Register to hold Blocks which will all be registered under the "despawned" namespace
 //    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);

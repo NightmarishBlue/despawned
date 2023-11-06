@@ -67,7 +67,7 @@ public abstract class MobCheckDespawn extends LivingEntity {
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;removeWhenFarAway(D)Z"))
     public boolean modifyRemoveWhenFarAway(Mob instance, double pDistanceToClosestPlayer) {
         // i guess we may have to put this logic in here if I can't figure this out.
-        if (instance instanceof Animal && instance.tickCount > 6000) return true;
+        if (instance instanceof Animal && instance.tickCount > Despawned.MINIMUM_AGE) return true;
         return instance.removeWhenFarAway(pDistanceToClosestPlayer);
     }
 }
