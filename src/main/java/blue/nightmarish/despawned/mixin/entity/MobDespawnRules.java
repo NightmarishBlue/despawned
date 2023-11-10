@@ -1,61 +1,71 @@
 package blue.nightmarish.despawned.mixin.entity;
 
+import blue.nightmarish.despawned.mixin.DespawnRules;
 import blue.nightmarish.despawned.Despawned;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import javax.annotation.Nullable;
 
 import static blue.nightmarish.despawned.Despawned.LOGGER;
 import static blue.nightmarish.despawned.Despawned.VOLATILE_SPAWN_TYPES;
 
 @Mixin(Mob.class)
-public abstract class MobDespawnRules extends LivingEntity {
-    //@Shadow public abstract boolean isPersistenceRequired();
-    @Nullable @Shadow
-    private MobSpawnType spawnType;
-
-    @Shadow private boolean persistenceRequired;
+public abstract class MobDespawnRules extends LivingEntity implements DespawnRules {
+    @Unique
+    private boolean hasDibs; // we can arbitrarily tag a creature by calling "dibs" on it
 
     protected MobDespawnRules(EntityType<? extends LivingEntity> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
 
-    @Inject(method = "isPersistenceRequired", at = @At("HEAD"), cancellable = true)
-    void modifyPersistenceRequired(CallbackInfoReturnable<Boolean> cir) {
-        // we're concerned with Animals.
-        if ((Object) this instanceof Animal) {
-//            Despawned.LOGGER.info("unless???");
+    @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;isPersistenceRequired()Z"))
+    boolean modifyPersistenceRequired(Mob instance) {
+        if (instance instanceof Animal) {
             // a mob with the persistence tag shouldn't despawn
-            if (this.persistenceRequired) { cir.setReturnValue(true); return; }
+            if (instance.isPersistenceRequired()) return true;
+
             // a mob whose spawn type exists and is not in the blacklist should not despawn
-            if (this.spawnType != null && !(VOLATILE_SPAWN_TYPES.contains(this.spawnType))) { cir.setReturnValue(true); return; }
-            // a tamed mob shouldn't despawn
-            if ((Object) this instanceof TamableAnimal && ((TamableAnimal) (Object) this).isTame())
-                { cir.setReturnValue(true); return; }
-            // if we reach this point, just leave it be
-//            LOGGER.info(this.getDisplayName().getString() + " is trying to despawn and its persistence is " + String.valueOf(cir.getReturnValue()));
+            // if the mob has no spawn type it probably shouldn't despawn (we have no idea how it got there)
+            if (instance.getSpawnType() == null || !(VOLATILE_SPAWN_TYPES.contains(instance.getSpawnType()))) return true;
+
+            // a tamed mob shouldn't despawn (why doesn't vanilla have an interface for this?)
+            if (instance instanceof TamableAnimal && ((TamableAnimal) instance).isTame()) return true;
+            if (instance instanceof AbstractHorse && ((AbstractHorse) instance).isTamed()) return true;
+
+            // if this animal has been bred before, don't despawn
+            if (((Animal) instance).getLoveCause() != null) return true;
+
+            // a mob that can pick stuff up is probably special (and might have your stuff so despawning it is a bad idea)
+            if (instance.canPickUpLoot()) return true;
+
+            // if this mob has "dibs" then don't despawn it either
+            if (((DespawnRules) instance).hasDibs) return true;
+
+            return false;
         }
+        return instance.isPersistenceRequired();
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"))
     void onInteract(Player pPlayer, InteractionHand pHand, CallbackInfoReturnable<InteractionResult> cir) {
-        String spawntype = "NULL";
-        if (this.spawnType != null) spawntype = this.spawnType.name();
-        LOGGER.info("this mob is a " + this.getName().getString());
-        LOGGER.info("its spawn type is " + spawntype);
-        if (this.spawnType != null && VOLATILE_SPAWN_TYPES.contains(this.spawnType)) Despawned.LOGGER.info("this is in the volatile spawn category");
-        LOGGER.info("the despawn distance is " + this.getType().getCategory().getDespawnDistance());
+        if ((Object) this instanceof Animal) {
+//            this.hasDibs = true;
+        }
     }
 
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;discard()V"))
@@ -69,5 +79,15 @@ public abstract class MobDespawnRules extends LivingEntity {
         // i guess we may have to put this logic in here if I can't figure this out.
         if (instance instanceof Animal && instance.tickCount > Despawned.MINIMUM_AGE) return true;
         return instance.removeWhenFarAway(pDistanceToClosestPlayer);
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+    public void addAdditionalAdditionalSaveData(CompoundTag pCompound, CallbackInfo ci) {
+        if ((Object) this instanceof Animal) pCompound.putBoolean("HasDibs", this.hasDibs);
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
+    public void readAdditionalAdditionalSaveData(CompoundTag pCompound, CallbackInfo ci) {
+        if ((Object) this instanceof Animal) this.hasDibs = pCompound.getBoolean("HasDibs");
     }
 }
