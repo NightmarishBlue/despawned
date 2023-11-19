@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static blue.nightmarish.despawned.Despawned.LOGGER;
 import static blue.nightmarish.despawned.Despawned.VOLATILE_SPAWN_TYPES;
 
 @Mixin(Mob.class)
@@ -66,11 +65,6 @@ public abstract class MobDespawnRules extends LivingEntity implements DespawnRul
         }
     }
 
-    @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;discard()V"))
-    public final void hookDiscard(Mob instance) {
-        LOGGER.info(this.getDisplayName().getString() + " fucking died lel");
-        instance.discard();
-    }
 
     @Redirect(method = "checkDespawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Mob;removeWhenFarAway(D)Z"))
     public boolean modifyRemoveWhenFarAway(Mob instance, double pDistanceToClosestPlayer) {
