@@ -29,7 +29,9 @@ public class Despawned
     public static final Logger LOGGER = LogUtils.getLogger();
 
     // const values
-    public static final Set<MobSpawnType> VOLATILE_SPAWN_TYPES = Set.of(MobSpawnType.NATURAL, MobSpawnType.CHUNK_GENERATION, MobSpawnType.SPAWN_EGG);
+    public static final Set<MobSpawnType> VOLATILE_SPAWN_TYPES = Set.of(MobSpawnType.NATURAL, MobSpawnType.CHUNK_GENERATION
+//    , MobSpawnType.SPAWN_EGG // for testing purposes
+    );
     public static final int DEFAULT_MINIMUM_AGE = 6000;
 
     public static int MINIMUM_AGE;

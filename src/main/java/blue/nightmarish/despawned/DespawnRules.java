@@ -1,4 +1,4 @@
-package blue.nightmarish.despawned.mixin;
+package blue.nightmarish.despawned;
 
 public interface DespawnRules {
     boolean hasDibs = false;
